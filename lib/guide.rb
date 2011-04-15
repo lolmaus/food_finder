@@ -1,12 +1,25 @@
 # coding: utf-8
 # «Магический комментарий», задающий кодировку содержимого.
 
+require 'restaurant'
+require 'actions'
+
 class Guide
 
 	def initialize(path=nil)
 		# Пытаемся найти текстовый файл ресторана.
+		Restaurant.filepath = path
+
+		if Restaurant.file_exists?
+			puts "Файл #{Restaurant.filepath} с данными о ресторанах обнаружен."
 		# Если не можем найти, создаем новый файл.
+		elsif Restaurant.create_file
+			puts "Создан новый файл #{Restaurant.filepath} для хранения данных о ресторанах"
 		# Если не можем создать, выходим
+		else
+			puts "Не удалось ни обнаружить, ни создать файл с данными ресторана. Программа прервана."
+			exit!
+		end
 	end
 
 
@@ -15,12 +28,46 @@ class Guide
 		introduction
 
 		# Основной цикл
-		# 	Чем займемся? (list, find, add, quit)
-		#   Выполнить это действие.
-		# Повторять до выхода
+		result = nil
+		until result == :quit # Завершаем цикл, если пользователь ввел "quit"
+
+			# Запарашиваем, что пользователь хочет сделать.
+			action = get_action
+
+			# Выполнить это действие, сохранить результат в result
+			result = do_action(action)
+		end
 
 		# Завершение
 		conclusion
+	end
+
+	def get_action
+
+		action = nil
+
+		# Спрашиваем пользователя, что он хочет, пока он не введет валидную команду.
+		until Actions.action_exists?(action)
+			puts "Введите одну из команд: " + Actions.actions.join(", ")
+			print "> "
+			action = gets.chomp.downcase.strip
+		end
+		return action
+	end
+
+	def do_action(action)
+		case action
+			when 'list', 'read'
+				puts "Перечисляю..."
+			when 'find', 'search'
+				puts "Ищу..."
+			when 'add', 'new'
+				puts "Добавляю..."
+			when 'quit', 'exit'
+				return :quit
+			else
+				puts "\nЯ не понимаю эту команду. :("
+		end
 	end
 
 	def introduction
