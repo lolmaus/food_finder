@@ -2,6 +2,11 @@
 # «Магический комментарий», задающий кодировку содержимого.
 
 require 'csv'
+require 'rbconfig'
+require 'iconv'
+
+# Проверяем, на винде ли мы
+WINDOWS = Config::CONFIG['host_os'] =~ /mswin|mingw/
 
 class Restaurant
 
@@ -66,8 +71,19 @@ class Restaurant
 
 	def save
 		return false unless Restaurant.file_usable?
-		CSV.open(@@filepath, 'a') do |writer|
-			writer << [@name, @cuisine, @price]
+
+
+		# Если мы на винде, правим кодировку
+
+		output_array = [@name, @cuisine, @price]
+
+		if WINDOWS
+			iconver = Iconv.new("cp866","windows-1251")
+			output_array.map! { |item| iconver.iconv(item)}
+		end
+
+		CSV.open(@@filepath, 'a:UTF-8') do |writer|
+			writer << output_array
 		end
 	end
 end
