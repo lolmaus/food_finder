@@ -1,3 +1,8 @@
+# coding: utf-8
+# «Магический комментарий», задающий кодировку содержимого.
+
+require 'csv'
+
 class Restaurant
 
 	# Переменная класса, содержащая путь к файлу данных с ресторанами
@@ -35,5 +40,34 @@ class Restaurant
 		# Возвращаем экземпляры ресторанов.
 	end
 
+	def self.build_with_wizard
+		args = {}
 
+		print "Название ресторана: "
+		args[:name] = gets.chomp.strip
+
+		print "Кухня: "
+		args[:cuisine] = gets.chomp.strip
+
+		print "Средний счет (в рублях): "
+		args[:price] = gets.chomp.strip
+
+		return self.new(args)
+	end
+
+
+	def initialize(args={})
+		@name    = args[:name]    || ""
+		@cuisine = args[:cuisine] || ""
+		@price   = args[:price]   || ""
+	end
+
+	attr_accessor :name, :cuisine, :price
+
+	def save
+		return false unless Restaurant.file_usable?
+		CSV.open(@@filepath, 'a') do |writer|
+			writer << [@name, @cuisine, @price]
+		end
+	end
 end

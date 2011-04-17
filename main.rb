@@ -21,5 +21,5 @@ $:.unshift( File.join(APP_ROOT, 'lib') )
 require 'guide'
 
 # Поехали!
-guide = Guide.new ('restaurants.txt')
+guide = Guide.new ('restaurants.csv')
 guide.launch!

@@ -54,7 +54,19 @@ end
 
 Action.new(['list','read'])
 Action.new(['find','search'])
-Action.new(['add','new'])
+
+
+Action.new(['add','new']) do
+	puts "\nДобавляем ресторан. Введите его данные."
+
+	restaurant = Restaurant.build_with_wizard
+
+	if restaurant.save
+		puts "\nРесторан добавлен.\n\n"
+	else
+		puts "\nОшибка сохранения. :( Ресторан не добавлен.\n\n"
+	end
+end
 
 
 Action.new(['quit','exit']) { :quit }
