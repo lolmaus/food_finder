@@ -2,7 +2,7 @@
 # «Магический комментарий», задающий кодировку содержимого.
 
 require 'restaurant'
-require 'actions'
+require 'action'
 
 class Guide
 
@@ -35,7 +35,7 @@ class Guide
 			action = get_action
 
 			# Выполнить это действие, сохранить результат в result
-			result = do_action(action)
+			result = Action.perform(action)
 		end
 
 		# Завершение
@@ -47,28 +47,14 @@ class Guide
 		action = nil
 
 		# Спрашиваем пользователя, что он хочет, пока он не введет валидную команду.
-		until Actions.action_exists?(action)
-			puts "Введите одну из команд: " + Actions.actions.join(", ")
+		until action
+			puts "\nВведите одну из команд: " + Action.return_default_actions.join(", ")
 			print "> "
 			action = gets.chomp.downcase.strip
 		end
 		return action
 	end
 
-	def do_action(action)
-		case action
-			when 'list', 'read'
-				puts "Перечисляю..."
-			when 'find', 'search'
-				puts "Ищу..."
-			when 'add', 'new'
-				puts "Добавляю..."
-			when 'quit', 'exit'
-				return :quit
-			else
-				puts "\nЯ не понимаю эту команду. :("
-		end
-	end
 
 	def introduction
 		puts "\n\n<<< Добро пожаловать в Food Finder>>>\n\n"
